@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: marketplace-postgres
+  labels:
+    db: marketplace-postgres
+spec:
+  selector:
+    matchLabels:
+      db: marketplace-postgres
+  template:
+    metadata:
+      labels:
+        db: marketplace-postgres
+    spec:
+      containers:
+        - name: marketplace-postgres
+          image: postgres:14.10
+          env:
+            - name: POSTGRES_USER
+              value: admin
+            - name: POSTGRES_PASSWORD
+              value: qwerty
+            - name: POSTGRES_DB
+              value: marketplace_db
+          resources:
+            requests:
+              cpu: 100m
+              memory: 60Mi
+            limits:
+              cpu: 200m
+              memory: 120Mi
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: marketplace-postgres
+  labels:
+    db: marketplace-postgres
+spec:
+  type: ClusterIP
+  selector:
+    db: marketplace-postgres
+  ports:
+  - protocol: TCP
+    port: 5432
+    targetPort: 5432
